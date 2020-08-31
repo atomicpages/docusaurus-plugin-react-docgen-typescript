@@ -1,0 +1,38 @@
+{
+    "name": "your-module",
+    "version": "1.0.0",
+    "description": "Some awesome description about your module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "eslint 'src/index.{ts,js,tsx}'"
+    },
+    "keywords": [],
+    "repository": {
+        "url": "",
+        "type": "git"
+    },
+    "author": "Dennis Thompson",
+    "license": "MIT",
+    "devDependencies": {
+        "@djthoms/eslint-config": "^3.0.0",
+        "@djthoms/prettier-config": "^2.0.0",
+        "@pika/pack": "^0.5.0",
+        "@pika/plugin-build-node": "^0.9.2",
+        "@pika/plugin-ts-standard-pkg": "^0.9.2",
+        "eslint": "^7.7.0",
+        "prettier": "^2.1.1",
+        "typescript": "^4.0.2"
+    },
+    "prettier": "@djthoms/prettier-config",
+    "eslintConfig": {
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "@djthoms/eslint-config",
+            "@djthoms/eslint-config/esmodules",
+            "@djthoms/eslint-config/typescript"
+        ]
+    }
+}

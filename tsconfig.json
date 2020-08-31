@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "downlevelIteration": true,
+        "esModuleInterop": true,
+        "target": "ESNext",
+        "module": "ES2020",
+        "moduleResolution": "node"
+    },
+    "include": ["src/"]
+}
