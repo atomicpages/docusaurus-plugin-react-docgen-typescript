@@ -1,6 +1,7 @@
 # Docusaurus Plugin `react-docgen-typescript`
 
-A Docusaurus 2.x plugin that help generate and consume auto-generated docs from `react-docgen-typescript`.
+A Docusaurus 2.x plugin that help generate and consume auto-generated docs from
+`react-docgen-typescript`.
 
 ## Installation
 
@@ -13,7 +14,8 @@ yarn add docusaurus-plugin-react-docgen-typescript react-docgen-typescript
 
 ## Usage
 
-Inside your `docusaurus.config.js` add to the `plugins` field and configure with the `src` option with full glob support :+1:.
+Inside your `docusaurus.config.js` add to the `plugins` field and configure with the `src` option
+with full glob support :+1:.
 
 ```js
 module.exports = {
@@ -40,7 +42,14 @@ module.exports = {
 };
 ```
 
-Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here (including negations).
+Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here
+(including negations).
+
+### Reading Annotations
+
+By default data can be read from `@generated/docusaurus-plugin-react-docgen-typescript/default`. If
+`route` is specified then data will be injected to the route as expected, otherwise data can be
+loaded via `useGlobalData`.
 
 ## Options
 

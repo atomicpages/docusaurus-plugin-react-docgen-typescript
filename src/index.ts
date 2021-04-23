@@ -55,13 +55,17 @@ export default function plugin(
                 );
 
                 setGlobalData(content);
-            } else {
+            } else if (route) {
                 addRoute({
                     ...route,
                     modules: {
                         docgen: await createData('docgen.json', JSON.stringify(content)),
                     },
                 });
+            } else {
+                content.map(component =>
+                    createData(`${component.displayName}.json`, JSON.stringify(component.props))
+                );
             }
         },
     };
