@@ -2,19 +2,32 @@
     "name": "docusaurus-plugin-react-docgen-typescript",
     "version": "0.0.1",
     "description": "A small plugin that integrates react-docgen-typescript with docusaurus 2.x",
+    "main": "pkg/dist-node/index.js",
+    "module": "pkg/dist-src/index.js",
+    "types": "pkg/dist-types/index.d.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "lint": "eslint 'src/index.{ts,js,tsx}'",
-        "build": "pika build"
+        "lint": "eslint src --ext=ts,tsx,js,jsx,json",
+        "prebuild": "rm -rf pkg",
+        "build": "npm-run-all -p build:*",
+        "build:src": "esbuild --format=esm --sourcemap --platform=node src/index.ts --outfile=pkg/dist-src/index.js",
+        "build:cjs": "esbuild --format=cjs --sourcemap --platform=node src/index.ts --outfile=pkg/dist-node/index.js",
+        "build:types": "tsc",
+        "prepare": "husky install",
+        "prepublishOnly": "pinst --disable",
+        "postpublish": "pinst --enable"
     },
+    "files": [
+        "pkg",
+        "src"
+    ],
     "publishConfig": {
         "access": "public"
     },
     "keywords": [
         "docusaurus",
-        "docusaurus-2",
         "docusaurus-plugin",
-        "plugin",
+        "docusaurus2-plugin",
         "react-docgen",
         "react-docgen-typescript",
         "typescript"
@@ -34,29 +47,22 @@
     "devDependencies": {
         "@djthoms/eslint-config": "^4.3.0",
         "@djthoms/prettier-config": "^3.2.0",
-        "@docusaurus/types": "^2.0.0-alpha.72",
-        "@pika/pack": "^0.5.0",
-        "@pika/plugin-build-node": "^0.9.2",
-        "@pika/plugin-ts-standard-pkg": "^0.9.2",
+        "@docusaurus/types": "^2.0.0-alpha.73",
         "@types/node": "^14.6.2",
+        "esbuild": "^0.11.14",
+        "husky": "^6.0.0",
+        "lint-staged": "^10.5.4",
+        "npm-run-all": "^4.1.5",
+        "pinst": "^2.1.6",
         "react-docgen-typescript": "^1.20.4",
-        "typescript": "^4.0.2"
+        "typescript": "^4.0.0"
     },
-    "@pika/pack": {
-        "pipeline": [
-            [
-                "@pika/plugin-ts-standard-pkg",
-                {
-                    "args": [
-                        "--target",
-                        "es2019"
-                    ]
-                }
-            ],
-            [
-                "@pika/plugin-build-node"
-            ]
-        ]
+    "lint-staged": {
+        "*.{ts,tsx,js,json}": [
+            "prettier --write",
+            "eslint --fix"
+        ],
+        "*.{md,yml,yaml}": "prettier --write"
     },
     "prettier": "@djthoms/prettier-config",
     "eslintConfig": {
@@ -65,7 +71,6 @@
         },
         "extends": [
             "@djthoms/eslint-config",
-            "@djthoms/eslint-config/esmodules",
             "@djthoms/eslint-config/typescript"
         ]
     }

@@ -3,6 +3,8 @@ name: Build PR & Push
 jobs:
     build:
         runs-on: ubuntu-latest
+        env:
+            HUSKY: 0
         strategy:
             matrix:
                 node-version: [14.x]
@@ -14,6 +16,6 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - name: npm install, lint, and build
               run: |
-                  npm i
+                  npm ci
                   npm run lint
                   npm run build
