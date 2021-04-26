@@ -1,6 +1,6 @@
 {
     "name": "docusaurus-plugin-react-docgen-typescript",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "A small plugin that integrates react-docgen-typescript with docusaurus 2.x",
     "main": "pkg/dist-node/index.js",
     "module": "pkg/dist-src/index.js",
