@@ -28,6 +28,9 @@ module.exports = {
                 src: ['path/to/**/*.tsx', '!path/to/**/*test.*'],
                 global: true,
                 parserOptions: {
+                    // pass parserOptions to react-docgen-typescript
+                    // here is a good starting point which filters out all
+                    // types from react
                     propFilter: (prop, component) => {
                         if (prop.parent) {
                             return !prop.parent.fileName.includes('@types/react');
@@ -45,11 +48,59 @@ module.exports = {
 Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here
 (including negations).
 
-### Reading Annotations
+## Reading Annotations
 
-By default data can be read from `@generated/docusaurus-plugin-react-docgen-typescript/default`. If
-`route` is specified then data will be injected to the route as expected, otherwise data can be
-loaded via `useGlobalData`.
+Using the default settings, annotations are stored inside of the `.docusaurus` directory. The
+`@docgen` alias is set to ensure stable access to these files.
+
+### Build a Prop Table
+
+Most of the time props will want to be shown as API information to a particular component. For
+convenience, we can use a simple hook from this package to dynamically import `.json` files:
+
+```jsx
+import * as React from 'react';
+import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/pkg/dist-src/hooks/useDynamicImport';
+
+export const PropTable = ({ name }) => {
+    const props = useDynamicImport(name);
+
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Default Value</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {Object.keys(props).map(key => {
+                    return (
+                        <tr key={key}>
+                            <td>
+                                <code>{key}</code>
+                            </td>
+                            <td>
+                                <code>{props[key].type?.name}</code>
+                            </td>
+                            <td>
+                                {props[key].defaultValue && (
+                                    <code>{props[key].defaultValue.value}</code>
+                                )}
+                            </td>
+                            <td>{props[key].required ? 'Yes' : 'No'}</td>
+                            <td>{props[key].description}</td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    );
+};
+```
 
 ## Options
 

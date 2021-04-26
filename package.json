@@ -10,8 +10,8 @@
         "lint": "eslint src --ext=ts,tsx,js,jsx,json",
         "prebuild": "rm -rf pkg",
         "build": "npm-run-all -p build:*",
-        "build:src": "esbuild --format=esm --sourcemap --platform=node src/index.ts --outfile=pkg/dist-src/index.js",
-        "build:cjs": "esbuild --format=cjs --sourcemap --platform=node src/index.ts --outfile=pkg/dist-node/index.js",
+        "build:src": "esbuild --format=esm --sourcemap --outbase=src --platform=node src/index.ts src/hooks/useDynamicImport.ts --outdir=pkg/dist-src",
+        "build:cjs": "esbuild --format=cjs --sourcemap --outbase=src --platform=node src/index.ts src/hooks/useDynamicImport.ts --outdir=pkg/dist-node",
         "build:types": "tsc",
         "prepare": "husky install",
         "prepublishOnly": "pinst --disable",
@@ -42,18 +42,21 @@
         "globby": "^11.0.0"
     },
     "peerDependencies": {
-        "react-docgen-typescript": "^1.20.0"
+        "react-docgen-typescript": "^1.20.0",
+        "react": ">=16.8.0"
     },
     "devDependencies": {
         "@djthoms/eslint-config": "^4.3.0",
         "@djthoms/prettier-config": "^3.2.0",
         "@docusaurus/types": "^2.0.0-alpha.73",
         "@types/node": "^14.6.2",
+        "@types/react": "^17.0.3",
         "esbuild": "^0.11.14",
         "husky": "^6.0.0",
         "lint-staged": "^10.5.4",
         "npm-run-all": "^4.1.5",
         "pinst": "^2.1.6",
+        "react": "^17.0.2",
         "react-docgen-typescript": "^1.20.4",
         "typescript": "^4.0.0"
     },

@@ -1,3 +1,4 @@
+import path from 'path';
 import globby from 'globby';
 import docgen, { ParserOptions, ComponentDoc, FileParser } from 'react-docgen-typescript';
 
@@ -45,6 +46,19 @@ export default function plugin(
         name: 'docusaurus-plugin-react-docgen-typescript',
         async loadContent() {
             return getParser(tsConfig, compilerOptions, parserOptions)(await globby(src));
+        },
+        configureWebpack(config) {
+            return {
+                resolve: {
+                    alias: {
+                        '@docgen': path.join(
+                            config.resolve.alias['@generated'],
+                            'docusaurus-plugin-react-docgen-typescript',
+                            'default'
+                        ),
+                    },
+                },
+            };
         },
         async contentLoaded({ content, actions }): Promise<void> {
             const { createData, setGlobalData, addRoute } = actions;
