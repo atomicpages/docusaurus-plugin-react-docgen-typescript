@@ -64,6 +64,10 @@ import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/pkg/
 
 export const PropTable = ({ name }) => {
     const props = useDynamicImport(name);
+    
+    if (!props) {
+        return null;
+    }
 
     return (
         <table>
