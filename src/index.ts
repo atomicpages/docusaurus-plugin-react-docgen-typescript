@@ -2,7 +2,7 @@ import path from 'path';
 import globby from 'globby';
 import docgen, { ParserOptions, ComponentDoc, FileParser } from 'react-docgen-typescript';
 
-import { Plugin, DocusaurusContext, RouteConfig } from '@docusaurus/types';
+import { Plugin, RouteConfig, DocusaurusContext } from '@docusaurus/types';
 import { CompilerOptions } from 'typescript';
 
 type Route = Pick<RouteConfig, 'exact' | 'component' | 'path' | 'priority'>;
@@ -22,6 +22,7 @@ type Options = Union & {
     tsConfig?: string;
     compilerOptions?: CompilerOptions;
     parserOptions?: ParserOptions;
+    createRoutes?: boolean;
 };
 
 const getParser = (
@@ -40,7 +41,7 @@ const getParser = (
 
 export default function plugin(
     context: DocusaurusContext,
-    { src, global = false, route, tsConfig, compilerOptions, parserOptions }: Options
+    { src, global = false, route, tsConfig, compilerOptions, parserOptions, createRoutes }: Options
 ): Plugin<ComponentDoc[]> {
     return {
         name: 'docusaurus-plugin-react-docgen-typescript',
@@ -77,10 +78,44 @@ export default function plugin(
                     },
                 });
             } else {
-                content.map(component =>
-                    createData(`${component.displayName}.json`, JSON.stringify(component.props))
-                );
+                const data = await createData('components.json', JSON.stringify(content));
+
+                if (createRoutes) {
+                    addRoute({
+                        path: '/docs/react',
+                        exact: true,
+                        component: '@theme/ReactComponentList',
+                        modules: {
+                            data: data,
+                        },
+                    });
+                }
+
+                content.forEach(async component => {
+                    const componentData = await createData(
+                        `${component}.json`,
+                        JSON.stringify(component)
+                    );
+
+                    if (createRoutes) {
+                        addRoute({
+                            path: `/docs/react/${component.displayName}`,
+                            component: '@theme/ReactComponent',
+                            modules: {
+                                data: componentData,
+                            },
+                        });
+                    }
+
+                    return createData(
+                        `${component.displayName}.json`,
+                        JSON.stringify(component.props)
+                    );
+                });
             }
+        },
+        getThemePath(): string {
+            return path.resolve(__dirname, './theme');
         },
     };
 }

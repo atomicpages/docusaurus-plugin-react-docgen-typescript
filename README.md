@@ -48,6 +48,21 @@ module.exports = {
 Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here
 (including negations).
 
+## Generating Routes
+
+By enabling `createRoutes` flag in the options, the following routes will be created:
+
+-   `/docs/react`, listing all the components
+-   `/docs/react/{ComponentDisplayName}`, rendering the component information (name, description,
+    props)
+
+You may also override the default interface by implementing the following components in your
+`src/components` folder:
+
+-   `<ReactComponentList />`
+-   `<ReactComponent />`
+-   `<PropTable />`
+
 ## Reading Annotations
 
 Using the default settings, annotations are stored inside of the `.docusaurus` directory. The
@@ -64,7 +79,7 @@ import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/pkg/
 
 export const PropTable = ({ name }) => {
     const props = useDynamicImport(name);
-    
+
     if (!props) {
         return null;
     }
