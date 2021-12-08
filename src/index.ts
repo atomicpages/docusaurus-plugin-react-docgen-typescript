@@ -2,7 +2,7 @@ import path from 'path';
 import globby from 'globby';
 import docgen, { ParserOptions, ComponentDoc, FileParser } from 'react-docgen-typescript';
 
-import { Plugin, RouteConfig, DocusaurusContext } from '@docusaurus/types';
+import { Plugin, DocusaurusContext, RouteConfig } from '@docusaurus/types';
 import { CompilerOptions } from 'typescript';
 
 type Route = Pick<RouteConfig, 'exact' | 'component' | 'path' | 'priority'>;
@@ -23,6 +23,7 @@ type Options = Union & {
     compilerOptions?: CompilerOptions;
     parserOptions?: ParserOptions;
     createRoutes?: boolean;
+    baseRoute?: string;
 };
 
 const getParser = (
@@ -41,7 +42,16 @@ const getParser = (
 
 export default function plugin(
     context: DocusaurusContext,
-    { src, global = false, route, tsConfig, compilerOptions, parserOptions, createRoutes }: Options
+    {
+        src,
+        global = false,
+        route,
+        tsConfig,
+        compilerOptions,
+        parserOptions,
+        createRoutes,
+        baseRoute = '/docs/react',
+    }: Options
 ): Plugin<ComponentDoc[]> {
     return {
         name: 'docusaurus-plugin-react-docgen-typescript',
@@ -78,40 +88,44 @@ export default function plugin(
                     },
                 });
             } else {
+                const baseRouteData = await createData('baseRoute.json', JSON.stringify(baseRoute));
                 const data = await createData('components.json', JSON.stringify(content));
+                const routes: RouteConfig[] = [];
 
                 if (createRoutes) {
                     addRoute({
-                        path: '/docs/react',
+                        path: baseRoute,
                         exact: true,
                         component: '@theme/ReactComponentList',
                         modules: {
+                            baseRoute: baseRouteData,
                             data: data,
                         },
+                        routes,
                     });
                 }
 
-                content.forEach(async component => {
-                    const componentData = await createData(
-                        `${component}.json`,
-                        JSON.stringify(component)
-                    );
+                await Promise.all(
+                    content.map(async component => {
+                        const componentData = await createData(
+                            `${component.displayName}.json`,
+                            JSON.stringify(component)
+                        );
 
-                    if (createRoutes) {
-                        addRoute({
-                            path: `/docs/react/${component.displayName}`,
-                            component: '@theme/ReactComponent',
-                            modules: {
-                                data: componentData,
-                            },
-                        });
-                    }
-
-                    return createData(
-                        `${component.displayName}.json`,
-                        JSON.stringify(component.props)
-                    );
-                });
+                        if (createRoutes) {
+                            addRoute({
+                                path: `${baseRoute}/${component.displayName}`,
+                                exact: true,
+                                component: '@theme/ReactComponent',
+                                modules: {
+                                    baseRoute: baseRouteData,
+                                    data: componentData,
+                                },
+                                routes,
+                            });
+                        }
+                    })
+                );
             }
         },
         getThemePath(): string {
