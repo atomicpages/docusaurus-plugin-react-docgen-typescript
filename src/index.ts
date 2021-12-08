@@ -53,20 +53,24 @@ export default function plugin(
         baseRoute = '/docs/react',
     }: Options
 ): Plugin<ComponentDoc[]> {
+    const { generatedFilesDir } = context;
+
+    const pluginId = id ?? DEFAULT_PLUGIN_ID;
+    const pluginName = 'docusaurus-plugin-react-docgen-typescript';
+    const pluginDataDirRoot = path.join(generatedFilesDir, pluginName);
+
+    const dataDir = path.join(pluginDataDirRoot, pluginId);
+
     return {
-        name: 'docusaurus-plugin-react-docgen-typescript',
+        name: pluginName,
         async loadContent() {
             return getParser(tsConfig, compilerOptions, parserOptions)(await globby(src));
         },
-        configureWebpack(config) {
+        configureWebpack() {
             return {
                 resolve: {
                     alias: {
-                        '@docgen': path.join(
-                            config.resolve.alias['@generated'],
-                            'docusaurus-plugin-react-docgen-typescript',
-                            'default'
-                        ),
+                        '@docgen': dataDir,
                     },
                 },
             };
