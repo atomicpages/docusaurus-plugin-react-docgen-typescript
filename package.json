@@ -10,8 +10,8 @@
         "lint": "eslint src --ext=ts,tsx,js,jsx,json",
         "prebuild": "rm -rf pkg",
         "build": "npm-run-all -p build:*",
-        "build:src": "esbuild --format=esm --sourcemap --outbase=src --platform=node src/index.ts src/hooks/useDynamicImport.ts --outdir=pkg/dist-src",
-        "build:cjs": "esbuild --format=cjs --sourcemap --outbase=src --platform=node src/index.ts src/hooks/useDynamicImport.ts --outdir=pkg/dist-node",
+        "build:src": "FORMAT=esm node ./scripts/build.js",
+        "build:cjs": "FORMAT=cjs node ./scripts/build.js",
         "build:types": "tsc",
         "prepare": "husky install",
         "prepublishOnly": "pinst --disable",
@@ -48,10 +48,15 @@
     "devDependencies": {
         "@djthoms/eslint-config": "^4.3.0",
         "@djthoms/prettier-config": "^3.2.0",
-        "@docusaurus/types": "^2.0.0-alpha.73",
+        "@docusaurus/core": "^2.0.0-beta.9",
+        "@docusaurus/module-type-aliases": "2.0.0-beta.9",
+        "@docusaurus/theme-classic": "^2.0.0-beta.9",
+        "@docusaurus/types": "2.0.0-beta.9",
+        "@tsconfig/docusaurus": "^1.0.4",
         "@types/node": "^14.6.2",
         "@types/react": "^17.0.3",
         "esbuild": "^0.11.14",
+        "esbuild-css-modules-plugin": "^2.0.9",
         "husky": "^6.0.0",
         "lint-staged": "^10.5.4",
         "npm-run-all": "^4.1.5",
@@ -75,6 +80,14 @@
         "extends": [
             "@djthoms/eslint-config",
             "@djthoms/eslint-config/typescript"
+        ],
+        "overrides": [
+            {
+                "files": "build.js",
+                "rules": {
+                    "@typescript-eslint/no-var-requires": "off"
+                }
+            }
         ]
     }
 }

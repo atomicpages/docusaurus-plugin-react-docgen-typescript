@@ -1,9 +1,12 @@
 import path from 'path';
 import globby from 'globby';
 import docgen, { ParserOptions, ComponentDoc, FileParser } from 'react-docgen-typescript';
+import { DEFAULT_PLUGIN_ID } from '@docusaurus/core/lib/constants';
 
-import { Plugin, DocusaurusContext, RouteConfig } from '@docusaurus/types';
+import { Plugin, LoadContext, RouteConfig } from '@docusaurus/types';
+import { docuHash } from '@docusaurus/utils';
 import { CompilerOptions } from 'typescript';
+import { PropSidebarItem } from '@docusaurus/plugin-content-docs-types';
 
 type Route = Pick<RouteConfig, 'exact' | 'component' | 'path' | 'priority'>;
 
@@ -18,10 +21,13 @@ type Union =
       };
 
 type Options = Union & {
+    id: string;
     src: string | string[];
     tsConfig?: string;
     compilerOptions?: CompilerOptions;
     parserOptions?: ParserOptions;
+    createRoutes?: boolean;
+    baseRoute?: string;
 };
 
 const getParser = (
@@ -39,23 +45,37 @@ const getParser = (
 };
 
 export default function plugin(
-    context: DocusaurusContext,
-    { src, global = false, route, tsConfig, compilerOptions, parserOptions }: Options
+    context: LoadContext,
+    {
+        id,
+        src,
+        global = false,
+        route,
+        tsConfig,
+        compilerOptions,
+        parserOptions,
+        createRoutes,
+        baseRoute = '/docs/react',
+    }: Options
 ): Plugin<ComponentDoc[]> {
+    const { generatedFilesDir } = context;
+
+    const pluginId = id ?? DEFAULT_PLUGIN_ID;
+    const pluginName = 'docusaurus-plugin-react-docgen-typescript';
+    const pluginDataDirRoot = path.join(generatedFilesDir, pluginName);
+
+    const dataDir = path.join(pluginDataDirRoot, pluginId);
+
     return {
-        name: 'docusaurus-plugin-react-docgen-typescript',
+        name: pluginName,
         async loadContent() {
             return getParser(tsConfig, compilerOptions, parserOptions)(await globby(src));
         },
-        configureWebpack(config) {
+        configureWebpack() {
             return {
                 resolve: {
                     alias: {
-                        '@docgen': path.join(
-                            config.resolve.alias['@generated'],
-                            'docusaurus-plugin-react-docgen-typescript',
-                            'default'
-                        ),
+                        '@docgen': dataDir,
                     },
                 },
             };
@@ -77,10 +97,63 @@ export default function plugin(
                     },
                 });
             } else {
-                content.map(component =>
-                    createData(`${component.displayName}.json`, JSON.stringify(component.props))
+                const sidebarName = `react-docgen-typescript-sidebar-${pluginId}`;
+                const sidebar: PropSidebarItem[] = content.map(component => ({
+                    type: 'link',
+                    href: `${baseRoute}/${component.displayName}`,
+                    label: component.displayName,
+                }));
+
+                const componentMetadataPath = await createData(
+                    `${docuHash('component-metadata-prop')}.json`,
+                    JSON.stringify(
+                        {
+                            apiSidebars: {
+                                [sidebarName]: sidebar,
+                            },
+                        },
+                        null,
+                        2
+                    )
                 );
+
+                const routes: RouteConfig[] = await Promise.all(
+                    content.map(async component => {
+                        const componentData = await createData(
+                            `${component.displayName}.json`,
+                            JSON.stringify(component)
+                        );
+
+                        if (createRoutes) {
+                            return {
+                                path: `${baseRoute}/${component.displayName}`,
+                                exact: true,
+                                component: '@theme/ReactComponentItem',
+                                sidebar: sidebarName,
+                                modules: {
+                                    componentMetadata: componentMetadataPath,
+                                    data: componentData,
+                                },
+                            };
+                        }
+                    })
+                );
+
+                if (createRoutes) {
+                    addRoute({
+                        path: baseRoute,
+                        component: '@theme/ReactComponentPage',
+                        sidebar: sidebarName,
+                        routes,
+                        modules: {
+                            componentMetadata: componentMetadataPath,
+                        },
+                    });
+                }
             }
+        },
+        getThemePath(): string {
+            return path.resolve(__dirname, './theme');
         },
     };
 }

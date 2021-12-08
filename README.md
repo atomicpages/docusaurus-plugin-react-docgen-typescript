@@ -48,6 +48,21 @@ module.exports = {
 Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here
 (including negations).
 
+## Generating Routes
+
+By enabling `createRoutes` flag in the options, the following routes will be created:
+
+-   `{baseRoute}`, listing all the components
+-   `{baseRoute}/{ComponentDisplayName}`, rendering the component information (name, description,
+    props)
+
+You may also override the default interface by implementing the following components in your
+`src/components` folder:
+
+-   `<ReactComponentList />`
+-   `<ReactComponent />`
+-   `<PropTable />`
+
 ## Reading Annotations
 
 Using the default settings, annotations are stored inside of the `.docusaurus` directory. The
@@ -63,8 +78,8 @@ import * as React from 'react';
 import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/pkg/dist-src/hooks/useDynamicImport';
 
 export const PropTable = ({ name }) => {
-    const props = useDynamicImport(name);
-    
+    const { props } = useDynamicImport(name);
+
     if (!props) {
         return null;
     }
@@ -116,3 +131,5 @@ export const PropTable = ({ name }) => {
 | `tsConfig`        | `string`                                                                           | No       | Specify the path to your custom tsconfig file (note that in most cases the default config is sufficient)                                                   |
 | `compilerOptions` | `CompilerOptions`                                                                  | No       | Pass custom ts compiler options in lieu of of a custom `tsConfig`                                                                                          |
 | `parserOptions`   | [`ParserOptions`](https://github.com/styleguidist/react-docgen-typescript#options) | No       | Options passed to `react-docgen-typescript`                                                                                                                |
+| `createRoutes`    | `boolean`                                                                          | No       | Whether to create a route for each component                                                                                                               |
+| `baseRoute`       | `string`                                                                           | No       | When creating routes, defines the base route                                                                                                               |

@@ -8,7 +8,7 @@ export const useDynamicImport = (name: string): Props => {
         let resolved = false;
 
         import(`@docgen/${name}.json`)
-            .then(props => {
+            .then(({ props }) => {
                 if (!resolved) {
                     resolved = true;
                     setProps(props.default);

@@ -1,11 +1,14 @@
 {
+    "extends": "@tsconfig/docusaurus/tsconfig.json",
     "compilerOptions": {
         "esModuleInterop": true,
         "declaration": true,
         "declarationMap": true,
         "declarationDir": "pkg/dist-types",
+        "noEmit": false,
         "emitDeclarationOnly": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "lib": ["ES2019", "DOM"]
     },
     "include": ["src/"]
 }
