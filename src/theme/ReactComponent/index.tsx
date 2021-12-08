@@ -11,6 +11,7 @@ export default function ReactComponent({ data }: ReactComponentProps): JSX.Eleme
         <>
             <h2>{data.displayName}</h2>
             <p>{data.description}</p>
+            <h3>Props</h3>
             <PropTable data={data.props}></PropTable>
         </>
     );
