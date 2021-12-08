@@ -1,12 +1,10 @@
 import React from 'react';
 
 import type { Props } from '@theme/DocPage';
-import { ReactComponentMetadata } from '../../metadata';
 import { ComponentDoc } from 'react-docgen-typescript';
 import ReactPropTable from '@theme/ReactPropTable';
 
 export type ReactComponentItemProps = Omit<Props, 'versionMetadata'> & {
-    componentMetadata: ReactComponentMetadata;
     data: ComponentDoc;
 };
 
