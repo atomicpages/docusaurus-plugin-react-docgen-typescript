@@ -1,15 +1,22 @@
-declare module '@theme/ReactComponentList' {
-    const ReactComponentList: (
-        props: import('./theme/ReactComponentList').ReactComponentListProps
+declare module '@theme/ReactComponentPage' {
+    const ReactComponentPage: (
+        props: import('./theme/ReactComponentPage').ReactComponentPageProps
     ) => JSX.Element | null;
-    export default ReactComponentList;
+    export default ReactComponentPage;
 }
 
-declare module '@theme/ReactComponent' {
-    const ReactComponent: (
-        props: import('./theme/ReactComponent').ReactComponentProps
+declare module '@theme/ReactComponentItem' {
+    const ReactComponentItem: (
+        props: import('./theme/ReactComponentItem').ReactComponentItemProps
     ) => JSX.Element | null;
-    export default ReactComponent;
+    export default ReactComponentItem;
+}
+
+declare module '@theme/ReactDocLayout' {
+    const ReactDocLayout: (
+        props: import('./theme/ReactDocLayout').ReactDocLayoutProps
+    ) => JSX.Element | null;
+    export default ReactDocLayout;
 }
 
 declare module '@theme/ReactPropTable' {

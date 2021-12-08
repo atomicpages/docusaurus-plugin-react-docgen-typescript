@@ -8,7 +8,7 @@
         "noEmit": false,
         "emitDeclarationOnly": true,
         "moduleResolution": "node",
-        "lib": ["ES2019"]
+        "lib": ["ES2019", "DOM"]
     },
     "include": ["src/"]
 }

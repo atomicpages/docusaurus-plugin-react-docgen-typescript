@@ -1,9 +1,12 @@
 import path from 'path';
 import globby from 'globby';
 import docgen, { ParserOptions, ComponentDoc, FileParser } from 'react-docgen-typescript';
+import { DEFAULT_PLUGIN_ID } from '@docusaurus/core/lib/constants';
 
-import { Plugin, DocusaurusContext, RouteConfig } from '@docusaurus/types';
+import { Plugin, LoadContext, RouteConfig } from '@docusaurus/types';
+import { docuHash } from '@docusaurus/utils';
 import { CompilerOptions } from 'typescript';
+import { PropSidebarItem } from '@docusaurus/plugin-content-docs-types';
 
 type Route = Pick<RouteConfig, 'exact' | 'component' | 'path' | 'priority'>;
 
@@ -18,6 +21,7 @@ type Union =
       };
 
 type Options = Union & {
+    id: string;
     src: string | string[];
     tsConfig?: string;
     compilerOptions?: CompilerOptions;
@@ -41,8 +45,9 @@ const getParser = (
 };
 
 export default function plugin(
-    context: DocusaurusContext,
+    context: LoadContext,
     {
+        id,
         src,
         global = false,
         route,
@@ -92,24 +97,27 @@ export default function plugin(
                     },
                 });
             } else {
-                const baseRouteData = await createData('baseRoute.json', JSON.stringify(baseRoute));
-                const data = await createData('components.json', JSON.stringify(content));
-                const routes: RouteConfig[] = [];
+                const sidebarName = `react-docgen-typescript-sidebar-${pluginId}`;
+                const sidebar: PropSidebarItem[] = content.map(component => ({
+                    type: 'link',
+                    href: `${baseRoute}/${component.displayName}`,
+                    label: component.displayName,
+                }));
 
-                if (createRoutes) {
-                    addRoute({
-                        path: baseRoute,
-                        exact: true,
-                        component: '@theme/ReactComponentList',
-                        modules: {
-                            baseRoute: baseRouteData,
-                            data: data,
+                const componentMetadataPath = await createData(
+                    `${docuHash('component-metadata-prop')}.json`,
+                    JSON.stringify(
+                        {
+                            apiSidebars: {
+                                [sidebarName]: sidebar,
+                            },
                         },
-                        routes,
-                    });
-                }
+                        null,
+                        2
+                    )
+                );
 
-                await Promise.all(
+                const routes: RouteConfig[] = await Promise.all(
                     content.map(async component => {
                         const componentData = await createData(
                             `${component.displayName}.json`,
@@ -117,19 +125,31 @@ export default function plugin(
                         );
 
                         if (createRoutes) {
-                            addRoute({
+                            return {
                                 path: `${baseRoute}/${component.displayName}`,
                                 exact: true,
-                                component: '@theme/ReactComponent',
+                                component: '@theme/ReactComponentItem',
+                                sidebar: sidebarName,
                                 modules: {
-                                    baseRoute: baseRouteData,
+                                    componentMetadata: componentMetadataPath,
                                     data: componentData,
                                 },
-                                routes,
-                            });
+                            };
                         }
                     })
                 );
+
+                if (createRoutes) {
+                    addRoute({
+                        path: baseRoute,
+                        component: '@theme/ReactComponentPage',
+                        sidebar: sidebarName,
+                        routes,
+                        modules: {
+                            componentMetadata: componentMetadataPath,
+                        },
+                    });
+                }
             }
         },
         getThemePath(): string {
