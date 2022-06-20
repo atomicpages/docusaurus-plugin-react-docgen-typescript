@@ -1,80 +1,76 @@
 {
-    "name": "docusaurus-plugin-react-docgen-typescript",
-    "version": "0.1.0",
-    "description": "A small plugin that integrates react-docgen-typescript with docusaurus 2.x",
-    "main": "pkg/dist-node/index.js",
-    "module": "pkg/dist-src/index.js",
-    "types": "pkg/dist-types/index.d.ts",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "lint": "eslint src --ext=ts,tsx,js,jsx,json",
-        "prebuild": "rm -rf pkg",
-        "build": "npm-run-all -p build:*",
-        "build:src": "esbuild --format=esm --sourcemap --outbase=src --platform=node src/index.ts src/hooks/useDynamicImport.ts --outdir=pkg/dist-src",
-        "build:cjs": "esbuild --format=cjs --sourcemap --outbase=src --platform=node src/index.ts src/hooks/useDynamicImport.ts --outdir=pkg/dist-node",
-        "build:types": "tsc",
-        "prepare": "husky install",
-        "prepublishOnly": "pinst --disable",
-        "postpublish": "pinst --enable"
-    },
-    "files": [
-        "pkg",
-        "src"
+  "name": "docusaurus-plugin-react-docgen-typescript",
+  "version": "0.1.1",
+  "description": "A small plugin that integrates react-docgen-typescript with docusaurus 2.x",
+  "keywords": [
+    "docusaurus",
+    "docusaurus-plugin",
+    "docusaurus2-plugin",
+    "react-docgen",
+    "react-docgen-typescript",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript"
+  },
+  "license": "MIT",
+  "author": "Dennis Thompson",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "lint": "eslint src --ext=ts,tsx,js,jsx,json",
+    "prebuild": "del dist",
+    "build": "npm-run-all -p build:*",
+    "build:esm": "swc src -d dist/esm",
+    "build:cjs": "swc src -d dist/cjs -C module.type=commonjs",
+    "build:types": "tsc -p .",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,json}": [
+      "prettier --write",
+      "eslint --fix"
     ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "keywords": [
-        "docusaurus",
-        "docusaurus-plugin",
-        "docusaurus2-plugin",
-        "react-docgen",
-        "react-docgen-typescript",
-        "typescript"
-    ],
-    "repository": {
-        "url": "https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript",
-        "type": "git"
-    },
-    "author": "Dennis Thompson",
-    "license": "MIT",
-    "dependencies": {
-        "globby": "^11.0.0"
-    },
-    "peerDependencies": {
-        "react-docgen-typescript": "^1.20.0",
-        "react": ">=16.8.0"
-    },
-    "devDependencies": {
-        "@djthoms/eslint-config": "^4.3.0",
-        "@djthoms/prettier-config": "^3.2.0",
-        "@docusaurus/types": "^2.0.0-alpha.73",
-        "@types/node": "^14.6.2",
-        "@types/react": "^17.0.3",
-        "esbuild": "^0.11.14",
-        "husky": "^6.0.0",
-        "lint-staged": "^10.5.4",
-        "npm-run-all": "^4.1.5",
-        "pinst": "^2.1.6",
-        "react": "^17.0.2",
-        "react-docgen-typescript": "^1.20.4",
-        "typescript": "^4.0.0"
-    },
-    "lint-staged": {
-        "*.{ts,tsx,js,json}": [
-            "prettier --write",
-            "eslint --fix"
-        ],
-        "*.{md,yml,yaml}": "prettier --write"
-    },
-    "prettier": "@djthoms/prettier-config",
-    "eslintConfig": {
-        "env": {
-            "node": true
-        },
-        "extends": [
-            "@djthoms/eslint-config",
-            "@djthoms/eslint-config/typescript"
-        ]
-    }
+    "*.{md,yml,yaml}": "prettier --write"
+  },
+  "prettier": "@djthoms/prettier-config",
+  "dependencies": {
+    "glob": "^8.0.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
+    "@djthoms/eslint-config": "^5.0.0",
+    "@djthoms/prettier-config": "^4.0.0",
+    "@docusaurus/types": "^2.0.0-beta.21",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.204",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^14.6.2",
+    "@types/react": "^17.0.3",
+    "del-cli": "^4.0.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.0",
+    "npm-run-all": "^4.1.5",
+    "react": "^17.0.2",
+    "react-docgen-typescript": "^2.2.2",
+    "semantic-release": "^19.0.2",
+    "typescript": "^4.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-docgen-typescript": "^2.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

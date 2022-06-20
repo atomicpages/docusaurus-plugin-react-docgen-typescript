@@ -1,11 +1,11 @@
 {
-    "compilerOptions": {
-        "esModuleInterop": true,
-        "declaration": true,
-        "declarationMap": true,
-        "declarationDir": "pkg/dist-types",
-        "emitDeclarationOnly": true,
-        "moduleResolution": "node"
-    },
-    "include": ["src/"]
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "dist/types",
+    "moduleResolution": "node"
+  },
+  "include": ["src/"]
 }

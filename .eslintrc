@@ -1,0 +1,3 @@
+{
+  "extends": ["@djthoms/eslint-config", "@djthoms/eslint-config/typescript"]
+}

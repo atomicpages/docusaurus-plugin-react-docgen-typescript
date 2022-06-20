@@ -8,8 +8,8 @@ A Docusaurus 2.x plugin that help generate and consume auto-generated docs from
 Grab from NPM and install along with `react-docgen-typescript`:
 
 ```sh
-npm i docusaurus-plugin-react-docgen-typescript react-docgen-typescript # or
-yarn add docusaurus-plugin-react-docgen-typescript react-docgen-typescript
+npm i docusaurus-plugin-react-docgen-typescript react-docgen-typescript@2 # or
+yarn add docusaurus-plugin-react-docgen-typescript react-docgen-typescript@2
 ```
 
 ## Usage
@@ -19,29 +19,29 @@ with full glob support :+1:.
 
 ```js
 module.exports = {
-    // ...
-    plugins: [
-        [
-            'docusaurus-plugin-react-docgen-typescript',
-            {
-                // pass in a single string or an array of strings
-                src: ['path/to/**/*.tsx', '!path/to/**/*test.*'],
-                global: true,
-                parserOptions: {
-                    // pass parserOptions to react-docgen-typescript
-                    // here is a good starting point which filters out all
-                    // types from react
-                    propFilter: (prop, component) => {
-                        if (prop.parent) {
-                            return !prop.parent.fileName.includes('@types/react');
-                        }
+  // ...
+  plugins: [
+    [
+      'docusaurus-plugin-react-docgen-typescript',
+      {
+        // pass in a single string or an array of strings
+        src: ['path/to/**/*.tsx', '!path/to/**/*test.*'],
+        global: true,
+        parserOptions: {
+          // pass parserOptions to react-docgen-typescript
+          // here is a good starting point which filters out all
+          // types from react
+          propFilter: (prop, component) => {
+            if (prop.parent) {
+              return !prop.parent.fileName.includes('@types/react');
+            }
 
-                        return true;
-                    },
-                },
-            },
-        ],
+            return true;
+          },
+        },
+      },
     ],
+  ],
 };
 ```
 
@@ -58,51 +58,46 @@ Using the default settings, annotations are stored inside of the `.docusaurus` d
 Most of the time props will want to be shown as API information to a particular component. For
 convenience, we can use a simple hook from this package to dynamically import `.json` files:
 
-```jsx
-import * as React from 'react';
-import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/pkg/dist-src/hooks/useDynamicImport';
+```tsx
+import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/dist/esm/hooks';
 
 export const PropTable = ({ name }) => {
-    const props = useDynamicImport(name);
-    
-    if (!props) {
-        return null;
-    }
+  const props = useDynamicImport(name);
 
-    return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Default Value</th>
-                    <th>Required</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {Object.keys(props).map(key => {
-                    return (
-                        <tr key={key}>
-                            <td>
-                                <code>{key}</code>
-                            </td>
-                            <td>
-                                <code>{props[key].type?.name}</code>
-                            </td>
-                            <td>
-                                {props[key].defaultValue && (
-                                    <code>{props[key].defaultValue.value}</code>
-                                )}
-                            </td>
-                            <td>{props[key].required ? 'Yes' : 'No'}</td>
-                            <td>{props[key].description}</td>
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </table>
-    );
+  if (!props) {
+    return null;
+  }
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Default Value</th>
+          <th>Required</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.keys(props).map(key => {
+          return (
+            <tr key={key}>
+              <td>
+                <code>{key}</code>
+              </td>
+              <td>
+                <code>{props[key].type?.name}</code>
+              </td>
+              <td>{props[key].defaultValue && <code>{props[key].defaultValue.value}</code>}</td>
+              <td>{props[key].required ? 'Yes' : 'No'}</td>
+              <td>{props[key].description}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
 };
 ```
 
