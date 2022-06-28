@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.0.0...v1.0.1) (2022-06-28)
+
+### Bug Fixes
+
+- fix workflow
+  ([9fd7108](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/commit/9fd7108f4c7e23ed8b5a34194e1722aa959b7dc4))
+
 ## [1.0.0](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v0.1.0...v1.0.0) (2022-06-20)
 
 ### ⚠ BREAKING CHANGES
