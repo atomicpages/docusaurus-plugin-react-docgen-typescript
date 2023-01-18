@@ -28,7 +28,7 @@ type Union =
       route?: Route;
     };
 
-type Options = Union & {
+export type Options = Union & {
   src: string | string[];
   tsConfig?: string;
   compilerOptions?: CompilerOptions;

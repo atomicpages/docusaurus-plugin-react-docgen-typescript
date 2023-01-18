@@ -8,8 +8,7 @@ A Docusaurus 2.x plugin that help generate and consume auto-generated docs from
 Grab from NPM and install along with `react-docgen-typescript`:
 
 ```sh
-npm i docusaurus-plugin-react-docgen-typescript react-docgen-typescript@2 # or
-yarn add docusaurus-plugin-react-docgen-typescript react-docgen-typescript@2
+npm i --save-dev docusaurus-plugin-react-docgen-typescript react-docgen-typescript
 ```
 
 ## Usage
@@ -24,6 +23,7 @@ module.exports = {
     [
       'docusaurus-plugin-react-docgen-typescript',
       {
+        /** @type {import('docusaurus-plugin-react-docgen-typescript').Options} */
         // pass in a single string or an array of strings
         src: ['path/to/**/*.tsx', '!path/to/**/*test.*'],
         global: true,
