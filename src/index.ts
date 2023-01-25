@@ -33,6 +33,7 @@ export type Options = Union & {
   tsConfig?: string;
   compilerOptions?: CompilerOptions;
   parserOptions?: ParserOptions;
+  globOptions: null;
 };
 
 const getParser = (
@@ -60,7 +61,11 @@ export default function plugin(
         tsConfig,
         compilerOptions,
         parserOptions
-      )(await glob(Array.isArray(src) ? `{${src.join(',')}}` : src));
+      )(
+        await glob(Array.isArray(src) ? src.join(',') : src, {
+          absolute: true,
+        })
+      );
     },
     configureWebpack(config) {
       return {
