@@ -1,3 +1,15 @@
+## [1.0.2](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.0.1...v1.0.2) (2023-01-25)
+
+### Bug Fixes
+
+- convert JS Array to multiple Glob matching pattern
+  ([#15](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/issues/15))
+  ([ce64361](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/commit/ce643616d91495a9d6f1274ff2558a205b39f045))
+- export types and update deps
+  ([6077208](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/commit/60772081af0d20b3ae8fe5f98e0961d4eb2928ef))
+- remove malformed glob syntax
+  ([c97c5a6](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/commit/c97c5a630146a517a4c871f1a39ce09f4ac491b4))
+
 ## [1.0.1](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.0.0...v1.0.1) (2022-06-28)
 
 ### Bug Fixes
