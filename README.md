@@ -47,6 +47,31 @@ module.exports = {
 Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here
 (including negations).
 
+`src` paths are relative to the location of your `docusaurus.config.js`. For example, if you
+had a directory structure like:
+
+```
+.
+├── LICENSE
+├── README.md
+├── package.json
+├── src
+...
+├── website
+│   ├── README.md
+│   ├── babel.config.js
+│   ├── blog
+│   ├── docs
+│   ├── docusaurus.config.js
+|   ...
+│   ├── src
+│   └── yarn.lock
+└── yarn.lock
+```
+
+Then to document all of your JSX components in your `src/` directory, you would use this path:
+`../src/**/*.jsx`.
+
 ## Reading Annotations
 
 Using the default settings, annotations are stored inside of the `.docusaurus` directory. The
@@ -99,6 +124,9 @@ export const PropTable = ({ name }) => {
   );
 };
 ```
+
+**N.b.** If you use `global: true`, then you must use the [`useGlobalData` hook](https://docusaurus.io/docs/docusaurus-core#useGlobalData)
+to access the docgen data. You cannot use `useDynamicImport`.
 
 ## Options
 
