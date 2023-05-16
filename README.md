@@ -22,8 +22,8 @@ module.exports = {
   plugins: [
     [
       'docusaurus-plugin-react-docgen-typescript',
+      /** @type {import('docusaurus-plugin-react-docgen-typescript').Options} */
       {
-        /** @type {import('docusaurus-plugin-react-docgen-typescript').Options} */
         // pass in a single string or an array of strings
         src: ['path/to/**/*.tsx', '!path/to/**/*test.*'],
         parserOptions: {
