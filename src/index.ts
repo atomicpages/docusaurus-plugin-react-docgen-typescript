@@ -97,9 +97,23 @@ export default function plugin(
           },
         });
       } else {
-        content.map(component =>
-          createData(`${component.displayName}.json`, JSON.stringify(component.props))
-        );
+        const processed = {};
+        content.map(component => {
+          let fileName = component.displayName;
+          if (component.displayName in processed) {
+            console.warn(
+              `Duplicate component '${component.displayName}' found (existing: ${processed[fileName][0]})`
+            );
+
+            fileName += `${processed[fileName].length}`;
+            console.warn(`'${component.filePath}' will be written to '${fileName}.json'`);
+          }
+          createData(`${fileName}.json`, JSON.stringify(component.props));
+          if (!(fileName in processed)) {
+            processed[fileName] = [];
+          }
+          processed[fileName].push(component.filePath);
+        });
       }
     },
   };
