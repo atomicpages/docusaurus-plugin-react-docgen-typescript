@@ -1,22 +1,24 @@
-import path from 'path';
-import { promisify } from 'util';
-import Glob from 'glob';
+import path from "path";
+import { promisify } from "util";
+import Glob from "glob";
 
-import {
-  withCustomConfig,
+import type {
   ParserOptions,
   ComponentDoc,
   FileParser,
+} from "react-docgen-typescript";
+import {
+  withCustomConfig,
   withCompilerOptions,
   withDefaultConfig,
-} from 'react-docgen-typescript';
+} from "react-docgen-typescript";
 
-import { Plugin, DocusaurusContext, RouteConfig } from '@docusaurus/types';
-import { CompilerOptions } from 'typescript';
+import type { Plugin, DocusaurusContext, RouteConfig } from "@docusaurus/types";
+import type { CompilerOptions } from "typescript";
 
 const glob = promisify(Glob);
 
-type Route = Pick<RouteConfig, 'exact' | 'component' | 'path' | 'priority'>;
+type Route = Pick<RouteConfig, "exact" | "component" | "path" | "priority">;
 
 type Union =
   | {
@@ -37,10 +39,10 @@ export type Options = Union & {
 };
 
 const getParser = (
-  config?: Options['tsConfig'],
-  options?: Options['compilerOptions'],
-  parserOptions?: Options['parserOptions']
-): FileParser['parse'] => {
+  config?: Options["tsConfig"],
+  options?: Options["compilerOptions"],
+  parserOptions?: Options["parserOptions"]
+): FileParser["parse"] => {
   if (config) {
     return withCustomConfig(config, parserOptions).parse;
   } else if (options) {
@@ -52,17 +54,24 @@ const getParser = (
 
 export default function plugin(
   context: DocusaurusContext,
-  { src, global = false, route, tsConfig, compilerOptions, parserOptions }: Options
+  {
+    src,
+    global = false,
+    route,
+    tsConfig,
+    compilerOptions,
+    parserOptions,
+  }: Options
 ): Plugin<ComponentDoc[]> {
   return {
-    name: 'docusaurus-plugin-react-docgen-typescript',
+    name: "docusaurus-plugin-react-docgen-typescript",
     async loadContent() {
       return getParser(
         tsConfig,
         compilerOptions,
         parserOptions
       )(
-        await glob(Array.isArray(src) ? src.join(',') : src, {
+        await glob(Array.isArray(src) ? src.join(",") : src, {
           absolute: true,
         })
       );
@@ -71,10 +80,10 @@ export default function plugin(
       return {
         resolve: {
           alias: {
-            '@docgen': path.join(
-              config.resolve.alias['@generated'],
-              'docusaurus-plugin-react-docgen-typescript',
-              'default'
+            "@docgen": path.join(
+              config.resolve.alias["@generated"],
+              "docusaurus-plugin-react-docgen-typescript",
+              "default"
             ),
           },
         },
@@ -85,7 +94,7 @@ export default function plugin(
 
       if (global) {
         console.warn(
-          'Using global data can potentially slow down your entire app. Use with care ❤️'
+          "Using global data can potentially slow down your entire app. Use with care ❤️"
         );
 
         setGlobalData(content);
@@ -93,26 +102,32 @@ export default function plugin(
         addRoute({
           ...route,
           modules: {
-            docgen: await createData('docgen.json', JSON.stringify(content)),
+            docgen: await createData("docgen.json", JSON.stringify(content)),
           },
         });
       } else {
         const processed = {};
-        content.map(component => {
-          let fileName = component.displayName;
-          if (component.displayName in processed) {
+        content.map((component) => {
+          const componentName = component.displayName;
+          let fileName = componentName;
+          if (componentName in processed) {
             console.warn(
-              `Duplicate component '${component.displayName}' found (existing: ${processed[fileName][0]})`
+              `Duplicate component '${componentName}' found (existing:
+                ${
+                  processed[componentName][processed[componentName].length - 1]
+                })`
             );
 
-            fileName += `${processed[fileName].length}`;
-            console.warn(`'${component.filePath}' will be written to '${fileName}.json'`);
+            fileName += `${processed[componentName].length}`;
+            console.warn(
+              `'${component.filePath}' will be written to '${fileName}.json'`
+            );
           }
           createData(`${fileName}.json`, JSON.stringify(component.props));
-          if (!(fileName in processed)) {
-            processed[fileName] = [];
+          if (!(componentName in processed)) {
+            processed[componentName] = [];
           }
-          processed[fileName].push(component.filePath);
+          processed[componentName].push(component.filePath);
         });
       }
     },
