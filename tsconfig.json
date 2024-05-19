@@ -4,8 +4,14 @@
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
     "declarationDir": "dist/types",
-    "moduleResolution": "node"
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "module": "ESNext",
+    "strict": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/"]
+  "include": ["src"]
 }

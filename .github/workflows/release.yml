@@ -1,8 +1,11 @@
-name: Push
-on: push
+name: Release
+on:
+  push:
+    branches:
+      - main
 jobs:
   release:
-    name: Build & Test
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,8 +18,13 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - name: Install, Lint, Test
+      - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
           pnpm lint
           pnpm build
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm semantic-release

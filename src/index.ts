@@ -1,22 +1,22 @@
-import path from 'path';
-import { promisify } from 'util';
-import Glob from 'glob';
+/* eslint-disable @typescript-eslint/unbound-method */
+import path from "path";
 
-import {
-  withCustomConfig,
+import type {
   ParserOptions,
   ComponentDoc,
   FileParser,
+} from "react-docgen-typescript";
+import {
+  withCustomConfig,
   withCompilerOptions,
   withDefaultConfig,
-} from 'react-docgen-typescript';
+} from "react-docgen-typescript";
 
-import { Plugin, DocusaurusContext, RouteConfig } from '@docusaurus/types';
-import { CompilerOptions } from 'typescript';
+import type { Plugin, DocusaurusContext, RouteConfig } from "@docusaurus/types";
+import { glob } from "glob";
+import type { CompilerOptions } from "typescript";
 
-const glob = promisify(Glob);
-
-type Route = Pick<RouteConfig, 'exact' | 'component' | 'path' | 'priority'>;
+type Route = Pick<RouteConfig, "exact" | "component" | "path" | "priority">;
 
 type Union =
   | {
@@ -36,45 +36,53 @@ export type Options = Union & {
   globOptions: null;
 };
 
-const getParser = (
-  config?: Options['tsConfig'],
-  options?: Options['compilerOptions'],
-  parserOptions?: Options['parserOptions']
-): FileParser['parse'] => {
+function getParser(
+  config?: Options["tsConfig"],
+  options?: Options["compilerOptions"],
+  parserOptions?: Options["parserOptions"],
+): FileParser["parse"] {
   if (config) {
-    return withCustomConfig(config, parserOptions).parse;
+    return withCustomConfig(config, parserOptions ?? {}).parse;
   } else if (options) {
     return withCompilerOptions(options, parserOptions).parse;
   }
 
   return withDefaultConfig(parserOptions).parse;
-};
+}
 
 export default function plugin(
   context: DocusaurusContext,
-  { src, global = false, route, tsConfig, compilerOptions, parserOptions }: Options
+  {
+    src,
+    global = false,
+    route,
+    tsConfig,
+    compilerOptions,
+    parserOptions,
+  }: Options,
 ): Plugin<ComponentDoc[]> {
   return {
-    name: 'docusaurus-plugin-react-docgen-typescript',
+    name: "docusaurus-plugin-react-docgen-typescript",
     async loadContent() {
       return getParser(
         tsConfig,
         compilerOptions,
-        parserOptions
+        parserOptions,
       )(
-        await glob(Array.isArray(src) ? src.join(',') : src, {
+        await glob(Array.isArray(src) ? src.join(",") : src, {
           absolute: true,
-        })
+        }),
       );
     },
     configureWebpack(config) {
       return {
         resolve: {
           alias: {
-            '@docgen': path.join(
-              config.resolve.alias['@generated'],
-              'docusaurus-plugin-react-docgen-typescript',
-              'default'
+            "@docgen": path.join(
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+              (config.resolve!.alias as any)["@generated"],
+              "docusaurus-plugin-react-docgen-typescript",
+              "default",
             ),
           },
         },
@@ -85,7 +93,7 @@ export default function plugin(
 
       if (global) {
         console.warn(
-          'Using global data can potentially slow down your entire app. Use with care ❤️'
+          "Using global data can potentially slow down your entire app. Use with care ❤️",
         );
 
         setGlobalData(content);
@@ -93,12 +101,15 @@ export default function plugin(
         addRoute({
           ...route,
           modules: {
-            docgen: await createData('docgen.json', JSON.stringify(content)),
+            docgen: await createData("docgen.json", JSON.stringify(content)),
           },
         });
       } else {
-        content.map(component =>
-          createData(`${component.displayName}.json`, JSON.stringify(component.props))
+        void content.map((component) =>
+          createData(
+            `${component.displayName}.json`,
+            JSON.stringify(component.props),
+          ),
         );
       }
     },

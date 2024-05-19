@@ -1,1 +1,1 @@
-export * from './useDynamicImport';
+export * from "./useDynamicImport";

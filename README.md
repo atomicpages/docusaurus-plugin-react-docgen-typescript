@@ -13,26 +13,26 @@ npm i --save-dev docusaurus-plugin-react-docgen-typescript react-docgen-typescri
 
 ## Usage
 
-Inside your `docusaurus.config.js` add to the `plugins` field and configure with the `src` option
-with full glob support :+1:.
+Inside your `docusaurus.config.js` add to the `plugins` field and configure with
+the `src` option with full glob support :+1:.
 
 ```js
 module.exports = {
   // ...
   plugins: [
     [
-      'docusaurus-plugin-react-docgen-typescript',
+      "docusaurus-plugin-react-docgen-typescript",
       /** @type {import('docusaurus-plugin-react-docgen-typescript').Options} */
       {
         // pass in a single string or an array of strings
-        src: ['path/to/**/*.tsx', '!path/to/**/*test.*'],
+        src: ["path/to/**/*.tsx", "!path/to/**/*test.*"],
         parserOptions: {
           // pass parserOptions to react-docgen-typescript
           // here is a good starting point which filters out all
           // types from react
           propFilter: (prop, component) => {
             if (prop.parent) {
-              return !prop.parent.fileName.includes('@types/react');
+              return !prop.parent.fileName.includes("@types/react");
             }
 
             return true;
@@ -44,11 +44,11 @@ module.exports = {
 };
 ```
 
-Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is allowed here
-(including negations).
+Any pattern supported by [`fast-glob`](https://github.com/mrmlnc/fast-glob) is
+allowed here (including negations).
 
-`src` paths are relative to the location of your `docusaurus.config.js`. For example, if you
-had a directory structure like:
+`src` paths are relative to the location of your `docusaurus.config.js`. For
+example, if you had a directory structure like:
 
 ```
 .
@@ -69,24 +69,29 @@ had a directory structure like:
 └── yarn.lock
 ```
 
-Then to document all of your JSX components in your `src/` directory, you would use this path:
-`../src/**/*.jsx`.
+Then to document all of your JSX components in your `src/` directory, you would
+use this path: `../src/**/*.jsx`.
 
 ## Reading Annotations
 
-Using the default settings, annotations are stored inside of the `.docusaurus` directory. The
-`@docgen` alias is set to ensure stable access to these files.
+Using the default settings, annotations are stored inside of the `.docusaurus`
+directory. The `@docgen` alias is set to ensure stable access to these files.
 
 ### Build a Prop Table
 
-Most of the time props will want to be shown as API information to a particular component. For
-convenience, we can use a simple hook from this package to dynamically import `.json` files:
+Most of the time props will want to be shown as API information to a particular
+component. For convenience, we can use a simple hook from this package to
+dynamically import `.json` files:
 
 ```tsx
-import { useDynamicImport } from 'docusaurus-plugin-react-docgen-typescript/dist/esm/hooks';
+import { useDynamicImport } from "docusaurus-plugin-react-docgen-typescript/useDynamicImport";
+
+type MyProps = {
+  /* ... */
+};
 
 export const PropTable = ({ name }) => {
-  const props = useDynamicImport(name);
+  const props = useDynamicImport<MyProps>(name);
 
   if (!props) {
     return null;
@@ -104,7 +109,7 @@ export const PropTable = ({ name }) => {
         </tr>
       </thead>
       <tbody>
-        {Object.keys(props).map(key => {
+        {Object.keys(props).map((key) => {
           return (
             <tr key={key}>
               <td>
@@ -113,8 +118,12 @@ export const PropTable = ({ name }) => {
               <td>
                 <code>{props[key].type?.name}</code>
               </td>
-              <td>{props[key].defaultValue && <code>{props[key].defaultValue.value}</code>}</td>
-              <td>{props[key].required ? 'Yes' : 'No'}</td>
+              <td>
+                {props[key].defaultValue && (
+                  <code>{props[key].defaultValue.value}</code>
+                )}
+              </td>
+              <td>{props[key].required ? "Yes" : "No"}</td>
               <td>{props[key].description}</td>
             </tr>
           );
@@ -125,7 +134,8 @@ export const PropTable = ({ name }) => {
 };
 ```
 
-**N.b.** If you use `global: true`, then you must use the [`useGlobalData` hook](https://docusaurus.io/docs/docusaurus-core#useGlobalData)
+**N.b.** If you use `global: true`, then you must use the
+[`useGlobalData` hook](https://docusaurus.io/docs/docusaurus-core#useGlobalData)
 to access the docgen data. You cannot use `useDynamicImport`.
 
 ## Options
