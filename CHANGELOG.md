@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.1.0...v1.2.0) (2024-05-19)
+
+
+### Features
+
+* move to tsup for transpiling to support ESM ([#22](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/issues/22)) ([6f2f64f](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/commit/6f2f64f49ffa078dfe62878820ba6c161141e159))
+
 ## [1.1.0](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.0.1...v1.1.0) (2023-01-25)
 
 ### Features
