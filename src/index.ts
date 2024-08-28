@@ -105,12 +105,43 @@ export default function plugin(
           },
         });
       } else {
-        void content.map((component) =>
-          createData(
-            `${component.displayName}.json`,
-            JSON.stringify(component.props),
-          ),
+        const toProcess = content.reduce<
+          [
+            Record<string, string[]>,
+            { fileName: string; component: ComponentDoc }[],
+          ]
+        >(
+          ([processed, components], component) => {
+            const componentName = component.displayName;
+            let fileName = componentName;
+            const alreadyProcessed = processed[componentName];
+            if (alreadyProcessed && alreadyProcessed.length > 0) {
+              console.warn(
+                `Duplicate component '${componentName}' found (existing:
+                ${alreadyProcessed[alreadyProcessed.length - 1]})`,
+              );
+
+              fileName += `${alreadyProcessed.length}`;
+              console.warn(
+                `'${component.filePath}' will be written to '${fileName}.json'`,
+              );
+            }
+            return [
+              {
+                ...processed,
+                [componentName]: [
+                  ...(alreadyProcessed || []),
+                  component.filePath,
+                ],
+              },
+              [...components, { fileName, component }],
+            ];
+          },
+          [{}, []],
         );
+        toProcess[1].forEach(({ fileName, component }) => {
+          void createData(`${fileName}.json`, JSON.stringify(component.props));
+        });
       }
     },
   };
