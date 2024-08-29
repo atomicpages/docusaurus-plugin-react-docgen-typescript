@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.2.0...v1.2.1) (2024-08-29)
+
+
+### Bug Fixes
+
+* ensure duplicate components are written to unique files ([#23](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/issues/23)) ([60d9da3](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/commit/60d9da3e36bdc28d4b25b633877f94385c813cc3))
+
 ## [1.2.0](https://github.com/atomicpages/docusaurus-plugin-react-docgen-typescript/compare/v1.1.0...v1.2.0) (2024-05-19)
 
 
