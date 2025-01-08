@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import path from "path";
+import path from "node:path";
 
 import type {
   ParserOptions,
@@ -30,6 +30,7 @@ type Union =
 
 export type Options = Union & {
   src: string | string[];
+  ignore?: string[];
   tsConfig?: string;
   compilerOptions?: CompilerOptions;
   parserOptions?: ParserOptions;
@@ -54,6 +55,7 @@ export default function plugin(
   context: DocusaurusContext,
   {
     src,
+    ignore,
     global = false,
     route,
     tsConfig,
@@ -69,8 +71,9 @@ export default function plugin(
         compilerOptions,
         parserOptions,
       )(
-        await glob(Array.isArray(src) ? src.join(",") : src, {
+        await glob(src, {
           absolute: true,
+          ignore,
         }),
       );
     },
